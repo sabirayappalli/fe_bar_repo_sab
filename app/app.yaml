@@ -1,0 +1,14 @@
+command:
+  - streamlit
+  - run
+  - app.py
+  - --server.headless
+  - "true"
+
+env:
+  - name: LAKEBASE_ENDPOINT
+    valueFrom: postgres
+  - name: DATA_SCHEMA
+    value: stockout_ml
+  - name: APP_SCHEMA
+    value: replenishment_app
