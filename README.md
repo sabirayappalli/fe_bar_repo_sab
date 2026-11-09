@@ -39,7 +39,7 @@ UC Volume (CSV/JSON landing)
 | Silver | `stockout_core.silver_*`, `dim_*` | pos 945,103 (dropped 552 null SKU, 921 negative units, 1,893 duplicates) |
 | Gold | `gold_store_sku_daily` | 1,104,000 rows, unique on (date, store_id, sku_id), stockout rate 7.08% |
 | Gold | `gold_supplier_performance`, `gold_stockout_kpis_daily` | 10 and 8,280 rows |
-| Governance | `stockout_core.mask_pii` + column masks on dim_store | 3 masks in information_schema.column_masks; PII returns `***REDACTED***` |
+| Governance | `stockout_core.mask_pii` + column masks on dim_store, tags, grants | 3 column masks (PII returns `***REDACTED***`); 111 table tags on 37 tables + 3 `pii_type` column tags; `account users` USE SCHEMA + SELECT on gold and dims |
 | ML | `stockout_ml.stockout_risk_model` v1 @champion | AUC 0.921, PR-AUC 0.681 |
 | Scoring | `stockout_ml.stockout_predictions` | 6,000 rows, 6,000 unique pairs, 0 case-pack or shelf-capacity violations |
 | GenAI | `stockout_ml.replenishment_recommendations` | 200 rows, 0 empty rationales |
@@ -111,7 +111,7 @@ AI is also part of the product: LightGBM + SHAP for risk and drivers, `ai_query`
 
 ## Known gaps
 
-* Table and column tags and grants are in notebook 02 but not yet applied (0 table tags at last check).
+* Tag keys `project`, `pii` and `use_case` are governed in this workspace with fixed allowed values, so the project is identified by schema rather than a project tag. Applied tags: `domain`, `layer`, `contains_pii` on 37 tables and `pii_type` on the 3 manager columns.
 * Lineage is captured raw->bronze->silver->gold->features and predictions->recommendations->Lakebase, but not features->predictions (scoring goes through pandas).
 * Predictions are a single snapshot (2026-10-31); a daily job would refresh pipeline, scoring, rationale and sync.
 
